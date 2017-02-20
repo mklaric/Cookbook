@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@drawable/ingredienttablerow"
+        android:id="@+id/ingRow"
+        android:accessibilityTraversalAfter="0"
+        android:baselineAligned="false">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/editText2"
+            android:layout_weight="20"
+            android:background="@android:color/transparent"
+            android:hint="Ingredient"
+            android:paddingLeft="10dp" />
+
+        <ImageButton
+            android:id="@+id/buttonDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_column="1"
+            android:src="@drawable/content_remove"
+            android:background="?android:attr/selectableItemBackground"
+            android:onClick="deleteIngRow"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginTop="5dp" />
+
+    </TableRow>
