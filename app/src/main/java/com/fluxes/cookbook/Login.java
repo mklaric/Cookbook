@@ -78,6 +78,7 @@ public class Login extends AppCompatActivity {
                 editor.commit();
                 // go to main screen
                 Intent startScreen = new Intent(getApplicationContext(),MainActivity.class);
+                startScreen.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(startScreen);
             }
             else {
