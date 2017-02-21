@@ -15,6 +15,8 @@
     <string name="insertRecipeButton">+\n NEW RECIPE</string>
     <string name="title_activity_new_recipe">NewRecipe</string>
 
+    <string name="server">http://cookbook.nonagon.eu</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="TitleText">Title</string>
     <string name="PrepTime">Preparation time</string>
@@ -31,4 +33,5 @@
     <string name="loginButton">Log In</string>
     <string name="usernameTextView">Username</string>
     <string name="passwordTextView">Password</string>
+    <string name="title_activity_open_recipe">OpenRecipe</string>
 </resources>

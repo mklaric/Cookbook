@@ -53,7 +53,7 @@ public class Login extends AppCompatActivity {
                     try {
 
                         // CALL GetText method to make post method call
-                        new PostProba().execute("http://b240557b.ngrok.io/api/users/login");
+                        new LoginPost().execute(getString(R.string.server) +"/api/users/login");
                     } catch (Exception ex) {
                         content.setText(" url exception! ");
                     }
@@ -62,20 +62,21 @@ public class Login extends AppCompatActivity {
 
     }
 
-    private class PostProba extends AsyncTask<String, Void, String> {
+    private class LoginPost extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... urls){
             return GetText(urls[0]);
         }
 
         @Override
         protected void onPostExecute(String result) {
-            //Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
             if(result.substring(0,1).equals("1")){
 
+                //add token to preferences
                 SharedPreferences preferences = getSharedPreferences(MYPREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("access_token", result.substring(1,result.length()));
                 editor.commit();
+                // go to main screen
                 Intent startScreen = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(startScreen);
             }
@@ -108,10 +109,6 @@ public class Login extends AppCompatActivity {
             data += "&" + URLEncoder.encode("password", "UTF-8")
                     + "=" + URLEncoder.encode(Pass, "UTF-8");
 
-
-            // Send data
-
-
             // Defined URL  where to send data
             URL url = new URL(URLString);
 
@@ -135,6 +132,8 @@ public class Login extends AppCompatActivity {
             writer.flush();
             writer.close();
             os.close();
+
+            //Response from server
             int responseCode=conn.getResponseCode();
 
             if (responseCode == HttpsURLConnection.HTTP_OK ) {

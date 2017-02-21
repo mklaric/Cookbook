@@ -101,7 +101,6 @@ public class NewRecipe extends AppCompatActivity {
                                     Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        Toast.makeText(this, Integer.toString(requestCode), Toast.LENGTH_SHORT).show();
 
         if(resultCode== RESULT_OK)
         {
