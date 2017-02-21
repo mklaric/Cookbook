@@ -27,4 +27,8 @@
     <string name="addStepButton">Add step</string>
     <string name="steps">Steps</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_login">Login</string>
+    <string name="loginButton">Log In</string>
+    <string name="usernameTextView">Username</string>
+    <string name="passwordTextView">Password</string>
 </resources>
