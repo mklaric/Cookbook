@@ -36,6 +36,7 @@
     <string name="loginButton">Log In</string>
     <string name="usernameTextView">Username</string>
     <string name="passwordTextView">Password</string>
+    <string name="RecipeDescriptionText">Description</string>
 
 
 </resources>
