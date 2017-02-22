@@ -37,45 +37,43 @@
             android:layout_marginTop="10dp">
 
             <TextView
-                android:layout_width="64dp"
+                android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:text="@string/PrepTime"
                 android:id="@+id/PrepTime"
                 android:textAlignment="center"
                 android:gravity="center"
                 android:lines="2"
-                android:layout_gravity="center"
-                android:layout_weight="0.56"
+                android:layout_gravity="left"
+                android:layout_weight="0.25"
                 android:textStyle="bold" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:id="@+id/enterPrepTime"
-                android:layout_weight="3"
+                android:layout_weight="0.25"
                 android:background="@drawable/textinputborder"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:inputType="text" />
+                android:inputType="numberSigned" />
 
             <TextView
-                android:layout_width="64dp"
+                android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:text="@string/CookTime"
                 android:id="@+id/CookTime"
                 android:gravity="center"
                 android:lines="2"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_weight="0.25" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:id="@+id/enterCookTime"
-                android:layout_weight="3"
+                android:layout_weight="0.25"
                 android:background="@drawable/textinputborder"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:inputType="text" />
+                android:inputType="numberSigned"
+                android:layout_gravity="right" />
 
         </LinearLayout>
 
@@ -104,7 +102,7 @@
                 android:id="@+id/imageView1"
                 android:layout_column="0"
                 android:layout_row="1"
-                android:contentDescription="@string/recipeImage1"
+                android:contentDescription="@string/RecipeImage"
                 android:onClick="openImageGallery"
                 android:scaleType="centerCrop"
                 android:background="@drawable/camera_icon" />

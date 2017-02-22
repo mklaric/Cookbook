@@ -1,6 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="com.fluxes.cookbook.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fluxes.cookbook.MainActivity">
+
+    <item android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_star_rate_white_18dp"
+        android:title="@string/action_favorite"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/user_info"
+        android:icon="@drawable/ic_face_white_18dp"
+        android:title="@string/action_favorite"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

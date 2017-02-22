@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TableLayout;
 
 public class MainActivity extends AppCompatActivity {
     public static final String MYPREFS= "token_prefs";
@@ -21,6 +22,19 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             setContentView(R.layout.activity_main);
+
+            TableLayout recipes= (TableLayout) findViewById(R.id.myRecipesTable);
+            View ingrow = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+            View ingrow2 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+            View ingrow3 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+            View ingrow4 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+
+            recipes.addView(ingrow);
+            recipes.addView(ingrow2);
+            recipes.addView(ingrow3);
+            recipes.addView(ingrow4);
+
+
         }
     }
 
@@ -43,11 +57,29 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_favorite) {
+            Intent intent = new Intent(this, Favorites.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.user_info) {
+            Intent intent = new Intent(this, UserInfo.class);
+            startActivity(intent);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     public void createNewRecipe(View view) {
         Intent intent = new Intent(this, NewRecipe.class);
+        startActivity(intent);
+    }
+
+    public void openRecipeActivity(View view)
+    {
+        Intent intent = new Intent(this, OpenRecipe.class);
         startActivity(intent);
     }
 }

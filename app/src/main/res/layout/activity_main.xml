@@ -8,7 +8,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/scrollView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
@@ -16,7 +16,8 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:id="@+id/myRecipesTable">
 
         </TableLayout>
     </ScrollView>
@@ -27,6 +28,7 @@
         android:text="@string/insertRecipeButton"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
-        android:onClick="createNewRecipe" />
+        android:onClick="createNewRecipe"
+        android:layout_marginTop="10dp" />
 
 </RelativeLayout>
