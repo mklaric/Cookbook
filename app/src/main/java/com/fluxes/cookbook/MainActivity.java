@@ -26,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         SharedPreferences preferences = getSharedPreferences(MYPREFS,MODE_PRIVATE);
         if(!preferences.contains("access_token")) {
             Intent loginScreen = new Intent(getApplicationContext(),Login.class);

@@ -24,12 +24,16 @@ public class Favorites extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setContentView(R.layout.activity_favorites);
 
         SharedPreferences mySharedPreferences=getSharedPreferences(MYPREFS,MODE_PRIVATE);
         String token=mySharedPreferences.getString("access_token", "");
         new FavoritesRequest().execute(ServerAPI.GetFavorites(token));
-
     }
 
     private class FavoritesRequest extends SendRequest {
