@@ -1,5 +1,6 @@
 package com.fluxes.cookbook;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -89,7 +90,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            SharedPreferences preferences = getSharedPreferences(MYPREFS, MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove("access_token");
+            editor.commit();
+            recreate();
             return true;
         }
 
