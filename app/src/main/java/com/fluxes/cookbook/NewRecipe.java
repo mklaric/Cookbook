@@ -53,11 +53,11 @@ public class NewRecipe extends AppCompatActivity {
         SharedPreferences mySharedPreferences=getSharedPreferences(MYPREFS,MODE_PRIVATE);
         token=mySharedPreferences.getString("access_token", "");
 
-        imageView1 = (ImageView) findViewById(R.id.imageView1);
+        /*imageView1 = (ImageView) findViewById(R.id.imageView1);
         imageView2 = (ImageView) findViewById(R.id.imageView2);
         imageView3 = (ImageView) findViewById(R.id.imageView3);
         imageView4 = (ImageView) findViewById(R.id.imageView4);
-        imageView5 = (ImageView) findViewById(R.id.imageView5);
+        imageView5 = (ImageView) findViewById(R.id.imageView5);*/
 
         title= (EditText) findViewById(R.id.TitleText);
         preptime= (EditText) findViewById(R.id.enterPrepTime);

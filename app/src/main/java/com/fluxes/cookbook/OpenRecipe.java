@@ -1,12 +1,14 @@
 
 package com.fluxes.cookbook;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
@@ -19,21 +21,31 @@ import org.json.JSONException;
 
 public class OpenRecipe extends AppCompatActivity {
 
-    TextView title,preptime, cooktime, description;
+    TextView title,preptime, cooktime, description, ratingText;
     TableLayout ingredient, step;
+    RatingBar rating;
+    Button rateButton;
+    String token;
+    public int idRecepta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_recipe);
-        int idRecepta= getIntent().getIntExtra("id",0);
+        idRecepta= getIntent().getIntExtra("id",0);
 
         title= (TextView) findViewById(R.id.openRecipeTitle);
         preptime= (TextView) findViewById(R.id.openPrepTime);
         cooktime= (TextView) findViewById(R.id.openCookTime);
         description=(TextView) findViewById(R.id.openDescription);
+        ratingText=(TextView) findViewById(R.id.openRatingText);
         ingredient= (TableLayout) findViewById(R.id.openIngredientsTable);
         step= (TableLayout) findViewById(R.id.openStepsTable);
+        rating = (RatingBar) findViewById(R.id.openRatingBar);
+        rateButton=(Button)findViewById(R.id.rateButton);
+
+        SharedPreferences mySharedPreferences=getSharedPreferences("token_prefs", MODE_PRIVATE);
+        token=mySharedPreferences.getString("access_token", "");
 
         new OpenRecipeRequest().execute(ServerAPI.GetRecipe(idRecepta));
 
@@ -83,6 +95,7 @@ public class OpenRecipe extends AppCompatActivity {
                     stepText.setText(stepName);
                     step.addView(rowsteps[i]);
                 }
+                new GetGradeRequest().execute(ServerAPI.GetGrade(token,idRecepta));
 
             }
 
@@ -92,6 +105,43 @@ public class OpenRecipe extends AppCompatActivity {
             }
 
         }
+    }
+    private class GetGradeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Log.d("FILTER", result.Response().toString());
+
+            try {
+                int grade= result.Response().getJSONObject(0).getInt("grade");
+                if (grade > 0) {
+                    rating.setIsIndicator(true);
+                    rating.setRating((float) grade);
+                    rateButton.setVisibility(View.INVISIBLE);
+                    ratingText.setText("Your grade");
+                }
+            }
+            catch (JSONException e){
+                Log.d("COOKBOOK", e.toString());
+            }
+        }
+
+    }
+
+    private class RateRecipeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            rating.setIsIndicator(true);
+            rateButton.setVisibility(View.INVISIBLE);
+            ratingText.setText("Your grade");
+
+        }
+    }
+
+    public void rateRecipe (View view){
+
+        int grade= (int) rating.getRating();
+        new RateRecipeRequest().execute(ServerAPI.AddGrade(token, idRecepta,grade));
+
     }
 
     @Override

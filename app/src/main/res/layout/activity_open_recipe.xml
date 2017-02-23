@@ -180,14 +180,28 @@
         android:textSize="20sp"
         android:paddingTop="10dp" />
 
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/openRatingBar"
-        android:stepSize="1"
-        android:isIndicator="false"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/openRatingBar"
+            android:stepSize="1"
+            android:isIndicator="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rate"
+            android:id="@+id/rateButton"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:onClick="rateRecipe" />
+    </LinearLayout>
 
 </LinearLayout>
 </ScrollView>
