@@ -10,7 +10,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/editText2"
+        android:id="@+id/stepEditText"
         android:layout_weight="20"
         android:background="@android:color/transparent"
         android:hint="Step"

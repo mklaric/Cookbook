@@ -22,8 +22,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="TitleText">Title</string>
 
-    <string name="PrepTime">Preparation time</string>
-    <string name="CookTime">Cooking time</string>
+    <string name="PrepTime">Preparation time (min)</string>
+    <string name="CookTime">Cooking time(min)</string>
     <string name="RecipeImage">recipeImage</string>
     <string name="photoUpload">Upload photo</string>
     <string name="ingredients">Ingredients</string>

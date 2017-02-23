@@ -1,6 +1,7 @@
 package com.fluxes.cookbook;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -24,6 +25,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,13 +36,22 @@ public class NewRecipe extends AppCompatActivity {
 
     private static final int SELECT_PHOTO = 100;
     private ImageView imageView1, imageView2, imageView3, imageView4,imageView5;
+    public static final String MYPREFS= "token_prefs";
+    EditText title,preptime, cooktime, description;
+    TableLayout ingredient, step;
+
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_new_recipe);
+
+        SharedPreferences mySharedPreferences=getSharedPreferences(MYPREFS,MODE_PRIVATE);
+        token=mySharedPreferences.getString("access_token", "");
 
         imageView1 = (ImageView) findViewById(R.id.imageView1);
         imageView2 = (ImageView) findViewById(R.id.imageView2);
@@ -47,10 +59,16 @@ public class NewRecipe extends AppCompatActivity {
         imageView4 = (ImageView) findViewById(R.id.imageView4);
         imageView5 = (ImageView) findViewById(R.id.imageView5);
 
-        TableLayout ingredient= (TableLayout) findViewById(R.id.ingredientsTable);
+        title= (EditText) findViewById(R.id.TitleText);
+        preptime= (EditText) findViewById(R.id.enterPrepTime);
+        cooktime= (EditText) findViewById(R.id.enterCookTime);
+        description=(EditText) findViewById(R.id.DescriptionText);
+        ingredient= (TableLayout) findViewById(R.id.ingredientsTable);
+        step= (TableLayout) findViewById(R.id.stepsTable);
+
         View ingrow = getLayoutInflater().inflate(R.layout.ingredients_row, null,false);
         ingredient.addView(ingrow);
-        TableLayout step= (TableLayout) findViewById(R.id.stepsTable);
+
         View strow = getLayoutInflater().inflate(R.layout.steps_row, null,false);
         step.addView(strow);
     }
@@ -150,6 +168,70 @@ public class NewRecipe extends AppCompatActivity {
     {
         TableLayout table= (TableLayout) findViewById(R.id.stepsTable);
         table.removeView((View) view.getParent());
+    }
+
+    private class AddIngredientRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Log.d("FILTER", result.Response().toString());
+
+        }
+    }
+
+    private class AddStepRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Log.d("FILTER", result.Response().toString());
+
+        }
+    }
+
+    private class NewRecipeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            try{
+                int id= result.Response().getJSONObject(0).getInt("id");
+                for(int i=0; i< ingredient.getChildCount(); ++i)
+                {
+                    View v=ingredient.getChildAt(i);
+                    EditText oneIngredient = (EditText) v.findViewById(R.id.ingredientEditText);
+                    String ingredientString = oneIngredient.getText().toString();
+                    new AddIngredientRequest().execute(ServerAPI.AddIngredient(token, id,ingredientString));
+                }
+                for(int i=0; i< step.getChildCount(); ++i)
+                {
+                    View v=step.getChildAt(i);
+                    EditText oneStep = (EditText) v.findViewById(R.id.stepEditText);
+                    String stepString = oneStep.getText().toString();
+                    new AddStepRequest().execute(ServerAPI.AddStep(token, id, stepString));
+                }
+                kill_activity();
+
+
+            }
+            catch (JSONException e){
+
+            }
+
+        }
+    }
+
+    public void SaveRecipe(View view){
+
+
+        String name=title.getText().toString();
+        String desc=description.getText().toString();
+        int preparationTime= Integer.valueOf(preptime.getText().toString());
+        int cookingTime= Integer.valueOf(cooktime.getText().toString());
+
+
+        new NewRecipeRequest().execute(ServerAPI.AddRecipe(token, name, desc, false, preparationTime, cookingTime));
+
+    }
+
+    public void kill_activity()
+    {
+        finish();
     }
 
 
