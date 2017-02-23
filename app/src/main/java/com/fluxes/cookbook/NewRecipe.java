@@ -25,7 +25,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fluxes.cookbook.database.Database;
+import com.fluxes.cookbook.database.Recipe;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -186,6 +190,25 @@ public class NewRecipe extends AppCompatActivity {
         }
     }
 
+    private class OpenRecipeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Database db = new Database(NewRecipe.this);
+            db.open();
+
+            try {
+                Recipe recipe = (new Recipe(db.db)).fromJSONObject(result.Response().getJSONObject(0));
+                recipe.save();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("COOKBOOK", e.toString());
+            }
+
+            db.close();
+            kill_activity();
+        }
+    }
+
     private class NewRecipeRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
@@ -205,9 +228,8 @@ public class NewRecipe extends AppCompatActivity {
                     String stepString = oneStep.getText().toString();
                     new AddStepRequest().execute(ServerAPI.AddStep(token, id, stepString));
                 }
-                kill_activity();
 
-
+                new OpenRecipeRequest().execute(ServerAPI.GetRecipe(id));
             }
             catch (JSONException e){
                 Log.d("COOKBOOK", e.toString());

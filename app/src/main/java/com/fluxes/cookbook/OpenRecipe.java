@@ -15,6 +15,9 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fluxes.cookbook.database.Database;
+import com.fluxes.cookbook.database.Recipe;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -47,8 +50,16 @@ public class OpenRecipe extends AppCompatActivity {
         SharedPreferences mySharedPreferences=getSharedPreferences("token_prefs", MODE_PRIVATE);
         token=mySharedPreferences.getString("access_token", "");
 
-        new OpenRecipeRequest().execute(ServerAPI.GetRecipe(idRecepta));
+        Database db = new Database(this);
+        db.open();
+        Recipe recipe = (new Recipe(db.db)).find(idRecepta);
+        if (recipe == null) {
+            new OpenRecipeRequest().execute(ServerAPI.GetRecipe(idRecepta));
+        } else {
+            openRecipeRequestHelper(recipe.toJSONArray());
+        }
 
+        db.close();
 
     }
 
@@ -56,56 +67,58 @@ public class OpenRecipe extends AppCompatActivity {
     private class OpenRecipeRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
+            openRecipeRequestHelper(result.Response());
+        }
+    }
 
+    private void openRecipeRequestHelper(JSONArray json) {
+        try {
+            String ingredientName,stepName;
+            String Title = json.getJSONObject(0).getString("name");
+            String Description = json.getJSONObject(0).getString("description");
+            int preparationTime = json.getJSONObject(0).getInt("preparation_time");
+            int cookingTime = json.getJSONObject(0).getInt("cooking_time");
+            JSONArray ingredients = json.getJSONObject(0).getJSONArray("ingredients");
+            JSONArray steps = json.getJSONObject(0).getJSONArray("steps");
 
-            try {
-                String ingredientName,stepName;
-                String Title = result.Response().getJSONObject(0).getString("name");
-                String Description = result.Response().getJSONObject(0).getString("description");
-                int preparationTime= result.Response().getJSONObject(0).getInt("preparation_time");
-                int cookingTime= result.Response().getJSONObject(0).getInt("cooking_time");
-                JSONArray ingredients = result.Response().getJSONObject(0).getJSONArray("ingredients");
-                JSONArray steps = result.Response().getJSONObject(0).getJSONArray("steps");
+            setTitle(Title);
+            title.setText(Title);
+            description.setText(Description);
+            preptime.setText(Integer.toString(preparationTime));
+            cooktime.setText(Integer.toString(cookingTime));
 
-                setTitle(Title);
-                title.setText(Title);
-                description.setText(Description);
-                preptime.setText(Integer.toString(preparationTime));
-                cooktime.setText(Integer.toString(cookingTime));
-
-                View rows[]=new View[ingredients.length()];
-                for (int i = 0; i < ingredients.length(); i++) {
-                    ingredientName= ingredients.getJSONObject(i).getString("name");
-                    rows[i] = getLayoutInflater().inflate(R.layout.ingredients_row_open_recipe, null,false);
-                    TextView ingredientText= (TextView) rows[i].findViewById(R.id.ingredientTextView);
-                    ingredientText.setText(ingredientName);
-                    ingredient.addView(rows[i]);
-                }
-
-
-                View rowsteps[]=new View[steps.length()];
-                for (int i = 0; i < steps.length(); i++) {
-                    stepName= steps.getJSONObject(i).getString("description");
-                    int number= steps.getJSONObject(i).getInt("number");
-                    rowsteps[i] = getLayoutInflater().inflate(R.layout.steps_row_open_recipe, null, false);
-
-                    TextView stepNumber= (TextView) rowsteps[i].findViewById(R.id.stepNumber);
-                    TextView stepText= (TextView) rowsteps[i].findViewById(R.id.stepTextView);
-                    stepNumber.setText(Integer.toString(number)+".");
-                    stepText.setText(stepName);
-                    step.addView(rowsteps[i]);
-                }
-                new GetGradeRequest().execute(ServerAPI.GetGrade(token,idRecepta));
-
+            View rows[]=new View[ingredients.length()];
+            for (int i = 0; i < ingredients.length(); i++) {
+                ingredientName= ingredients.getJSONObject(i).getString("name");
+                rows[i] = getLayoutInflater().inflate(R.layout.ingredients_row_open_recipe, null,false);
+                TextView ingredientText= (TextView) rows[i].findViewById(R.id.ingredientTextView);
+                ingredientText.setText(ingredientName);
+                ingredient.addView(rows[i]);
             }
 
-            catch (JSONException e){
-                Log.d("COOKBOOK", e.toString());
 
+            View rowsteps[]=new View[steps.length()];
+            for (int i = 0; i < steps.length(); i++) {
+                stepName= steps.getJSONObject(i).getString("description");
+                int number= steps.getJSONObject(i).getInt("number");
+                rowsteps[i] = getLayoutInflater().inflate(R.layout.steps_row_open_recipe, null, false);
+
+                TextView stepNumber= (TextView) rowsteps[i].findViewById(R.id.stepNumber);
+                TextView stepText= (TextView) rowsteps[i].findViewById(R.id.stepTextView);
+                stepNumber.setText(Integer.toString(number)+".");
+                stepText.setText(stepName);
+                step.addView(rowsteps[i]);
             }
+            new GetGradeRequest().execute(ServerAPI.GetGrade(token,idRecepta));
+
+        }
+
+        catch (JSONException e){
+            Log.d("COOKBOOK", e.toString());
 
         }
     }
+
     private class GetGradeRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
@@ -127,12 +140,44 @@ public class OpenRecipe extends AppCompatActivity {
 
     }
 
+    private class StoreRecipeGradeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Database db = new Database(OpenRecipe.this);
+            db.open();
+
+            try {
+                float grade = (float) result.Response().getJSONObject(0).getDouble("grade");
+                int id = result.Response().getJSONObject(0).getInt("id");
+
+                Recipe recipe = new Recipe(db.db).find(id);
+                if (recipe != null) {
+                    recipe.grade = grade;
+                    recipe.save();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("COOKBOOK", e.toString());
+            }
+
+            db.close();
+        }
+    }
+
     private class RateRecipeRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
             rating.setIsIndicator(true);
             rateButton.setVisibility(View.INVISIBLE);
             ratingText.setText("Your grade");
+            try {
+                int id = result.Response().getJSONObject(0).getInt("id");
+
+                new StoreRecipeGradeRequest().execute(ServerAPI.GetRecipe(token, id));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("COOKBOOK", e.toString());
+            }
 
         }
     }
