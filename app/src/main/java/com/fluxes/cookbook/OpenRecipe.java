@@ -151,9 +151,10 @@ public class OpenRecipe extends AppCompatActivity {
                 int id = result.Response().getJSONObject(0).getInt("id");
 
                 Recipe recipe = new Recipe(db.db).find(id);
-
-                recipe.grade = grade;
-                recipe.save();
+                if (recipe != null) {
+                    recipe.grade = grade;
+                    recipe.save();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("COOKBOOK", e.toString());
