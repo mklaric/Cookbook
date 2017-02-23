@@ -30,7 +30,7 @@
     <string name="steps">Steps</string>
     <string name="addIngredientButton">Add more</string>
     <string name="addStepButton">Add step</string>
-    <string name="insertRecipeButton">+\n NEW RECIPE</string>
+    <string name="insertRecipeButton">+ NEW RECIPE</string>
     <string name="RecipeDescriptionText">Description</string>
     <string name="rateRecipe">Rate this recipe!</string>
 
@@ -38,6 +38,5 @@
     <string name="loginButton">Log In</string>
     <string name="usernameTextView">Username</string>
     <string name="passwordTextView">Password</string>
-
 
 </resources>
