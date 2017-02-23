@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TableLayout;
+import android.widget.TextView;
+
+import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
     public static final String MYPREFS= "token_prefs";
@@ -22,18 +27,49 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             setContentView(R.layout.activity_main);
+            String token=preferences.getString("access_token", "");
+            new MyRecipesRequest().execute(ServerAPI.GetRecipes(token));
 
-            TableLayout recipes= (TableLayout) findViewById(R.id.myRecipesTable);
-            View ingrow = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
-            View ingrow2 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
-            View ingrow3 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
-            View ingrow4 = getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
 
-            recipes.addView(ingrow);
-            recipes.addView(ingrow2);
-            recipes.addView(ingrow3);
-            recipes.addView(ingrow4);
+        }
+    }
 
+    private class MyRecipesRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+
+            try {
+                String Title = null;
+                int numberOfRecipes= result.Response().length();
+
+                View rows[]=new View[numberOfRecipes];
+                TableLayout recipes= (TableLayout) findViewById(R.id.myRecipesTable);
+
+                for (int i = 0; i < numberOfRecipes; ++i) {
+
+                    Title = result.Response().getJSONObject(i).getString("name");
+                    String Description = result.Response().getJSONObject(i).getString("description");
+                    float Grade=(float) result.Response().getJSONObject(i).getDouble("grade");
+                    int id=result.Response().getJSONObject(i).getInt("id");
+
+
+                    rows[i]=getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+                    TextView title= (TextView) rows[i].findViewById(R.id.recInfoTitle);
+                    TextView description = (TextView) rows[i].findViewById(R.id.recInfoDescription);
+                    RatingBar rating = (RatingBar) rows[i].findViewById(R.id.recInfoRating);
+
+
+                    title.setText(Title);
+                    title.setTag(id);
+                    description.setText(Description);
+                    rating.setRating(Grade);
+
+                    recipes.addView(rows[i]);
+                }
+            }
+            catch (JSONException e){
+                Log.d("COOKBOOK", e.toString());
+            }
 
         }
     }
@@ -85,7 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void openRecipeActivity(View view)
     {
+        int id= (Integer) view.getTag();
         Intent intent = new Intent(this, OpenRecipe.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 }
