@@ -17,22 +17,22 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 
-public class Favorites extends AppCompatActivity {
+public class Search extends AppCompatActivity {
 
     public static final String MYPREFS= "token_prefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorites);
+        setContentView(R.layout.activity_search);
 
         SharedPreferences mySharedPreferences=getSharedPreferences(MYPREFS,MODE_PRIVATE);
         String token=mySharedPreferences.getString("access_token", "");
-        new FavoritesRequest().execute(ServerAPI.GetFavorites(token));
+        new AllRecipesRequest().execute(ServerAPI.RecipeQuery(token));
 
     }
 
-    private class FavoritesRequest extends SendRequest {
+    private class AllRecipesRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
 
@@ -41,7 +41,7 @@ public class Favorites extends AppCompatActivity {
                 int numberOfRecipes= result.Response().length();
 
                 View rows[]=new View[numberOfRecipes];
-                TableLayout recipes= (TableLayout) findViewById(R.id.favsTable);
+                TableLayout recipes= (TableLayout) findViewById(R.id.searchTable);
 
                 for (int i = 0; i < numberOfRecipes; ++i) {
 
@@ -64,6 +64,7 @@ public class Favorites extends AppCompatActivity {
 
                     recipes.addView(rows[i]);
                 }
+                Log.d("FILTER", result.Url().toString());
             }
             catch (JSONException e){
 

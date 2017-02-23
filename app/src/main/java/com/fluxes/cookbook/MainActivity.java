@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(this, Search.class);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == R.id.action_favorite) {
             Intent intent = new Intent(this, Favorites.class);
             startActivity(intent);

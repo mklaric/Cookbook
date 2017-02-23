@@ -37,6 +37,8 @@
     <string name="usernameTextView">Username</string>
     <string name="passwordTextView">Password</string>
     <string name="RecipeDescriptionText">Description</string>
+    <string name="title_activity_search">Search</string>
+    <string name="action_search">action search</string>
 
 
 </resources>
