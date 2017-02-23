@@ -210,7 +210,7 @@ public class NewRecipe extends AppCompatActivity {
 
             }
             catch (JSONException e){
-
+                Log.d("COOKBOOK", e.toString());
             }
 
         }

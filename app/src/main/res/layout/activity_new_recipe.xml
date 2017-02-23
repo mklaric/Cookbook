@@ -54,7 +54,8 @@
                 android:id="@+id/enterPrepTime"
                 android:layout_weight="0.25"
                 android:background="@drawable/textinputborder"
-                android:inputType="numberSigned" />
+                android:inputType="numberSigned"
+                android:paddingStart="10dp" />
 
             <TextView
                 android:layout_width="0px"
@@ -73,7 +74,8 @@
                 android:layout_weight="0.25"
                 android:background="@drawable/textinputborder"
                 android:inputType="numberSigned"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"
+                android:paddingStart="10dp" />
 
         </LinearLayout>
 

@@ -66,7 +66,7 @@ public class Favorites extends AppCompatActivity {
                 }
             }
             catch (JSONException e){
-
+                Log.d("COOKBOOK", e.toString());
             }
 
         }
@@ -96,7 +96,9 @@ public class Favorites extends AppCompatActivity {
 
     public void openRecipeActivity(View view)
     {
+        int id= (Integer) view.getTag();
         Intent intent = new Intent(this, OpenRecipe.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 }

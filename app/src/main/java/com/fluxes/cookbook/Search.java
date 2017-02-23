@@ -67,6 +67,7 @@ public class Search extends AppCompatActivity {
                 Log.d("FILTER", result.Url().toString());
             }
             catch (JSONException e){
+                Log.d("COOKBOOK", e.toString());
 
             }
 
@@ -97,7 +98,9 @@ public class Search extends AppCompatActivity {
 
     public void openRecipeActivity(View view)
     {
+        int id= (Integer) view.getTag();
         Intent intent = new Intent(this, OpenRecipe.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 }
