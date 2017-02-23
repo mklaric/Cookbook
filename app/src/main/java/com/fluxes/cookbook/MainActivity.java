@@ -11,7 +11,12 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fluxes.cookbook.database.Database;
+import com.fluxes.cookbook.database.Recipe;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,49 +33,24 @@ public class MainActivity extends AppCompatActivity {
         else {
             setContentView(R.layout.activity_main);
             String token=preferences.getString("access_token", "");
-            new MyRecipesRequest().execute(ServerAPI.GetRecipes(token));
 
+            Database db = new Database(this);
+            db.open();
 
+            if ((new Recipe(db.db)).isEmpty()) {
+                new MyRecipesRequest().execute(ServerAPI.GetRecipes(token));
+            } else {
+                myRecipesHelper((new Recipe(db.db)).jsonAll());
+            }
+
+            db.close();
         }
     }
 
     private class MyRecipesRequest extends SendRequest {
         @Override
         protected void onPostExecute(Request result) {
-
-            try {
-                String Title = null;
-                int numberOfRecipes= result.Response().length();
-
-                View rows[]=new View[numberOfRecipes];
-                TableLayout recipes= (TableLayout) findViewById(R.id.myRecipesTable);
-
-                for (int i = 0; i < numberOfRecipes; ++i) {
-
-                    Title = result.Response().getJSONObject(i).getString("name");
-                    String Description = result.Response().getJSONObject(i).getString("description");
-                    float Grade=(float) result.Response().getJSONObject(i).getDouble("grade");
-                    int id=result.Response().getJSONObject(i).getInt("id");
-
-
-                    rows[i]=getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
-                    TextView title= (TextView) rows[i].findViewById(R.id.recInfoTitle);
-                    TextView description = (TextView) rows[i].findViewById(R.id.recInfoDescription);
-                    RatingBar rating = (RatingBar) rows[i].findViewById(R.id.recInfoRating);
-
-
-                    title.setText(Title);
-                    title.setTag(id);
-                    description.setText(Description);
-                    rating.setRating(Grade);
-
-                    recipes.addView(rows[i]);
-                }
-            }
-            catch (JSONException e){
-                Log.d("COOKBOOK", e.toString());
-            }
-
+            myRecipesHelper(result.Response());
         }
     }
 
@@ -79,6 +59,65 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+
+    private class OpenRecipeRequest extends SendRequest {
+        @Override
+        protected void onPostExecute(Request result) {
+            Database db = new Database(MainActivity.this);
+            db.open();
+
+            try {
+                Recipe recipe = (new Recipe(db.db)).fromJSONObject(result.Response().getJSONObject(0));
+                recipe.save();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("COOKBOOK", e.toString());
+            }
+
+            db.close();
+        }
+    }
+
+    private void myRecipesHelper(JSONArray json) {
+        Database db = new Database(this);
+        db.open();
+        try {
+            String Title = null;
+            int numberOfRecipes = json.length();
+
+            View rows[]=new View[numberOfRecipes];
+            TableLayout recipes= (TableLayout) findViewById(R.id.myRecipesTable);
+
+            for (int i = 0; i < numberOfRecipes; ++i) {
+                Title = json.getJSONObject(i).getString("name");
+                String Description = json.getJSONObject(i).getString("description");
+                float Grade = (float) json.getJSONObject(i).getDouble("grade");
+                int id = json.getJSONObject(i).getInt("id");
+
+                if ((new Recipe(db.db)).find(id) == null) {
+                    new OpenRecipeRequest().execute(ServerAPI.GetRecipe(id));
+                }
+
+                rows[i]=getLayoutInflater().inflate(R.layout.recipe_info_row, null,false);
+                TextView title = (TextView) rows[i].findViewById(R.id.recInfoTitle);
+                TextView description = (TextView) rows[i].findViewById(R.id.recInfoDescription);
+                RatingBar rating = (RatingBar) rows[i].findViewById(R.id.recInfoRating);
+
+
+                title.setText(Title);
+                title.setTag(id);
+                description.setText(Description);
+                rating.setRating(Grade);
+
+                recipes.addView(rows[i]);
+            }
+        }
+        catch (JSONException e){
+            Log.d("COOKBOOK", e.toString());
+        }
+        db.close();
     }
 
     @Override
